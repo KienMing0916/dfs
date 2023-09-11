@@ -8,3 +8,16 @@
 .upload-box:hover {
     background-color: #f0f0f0;
 }
+
+.navbar-nav .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.nav-link {
+    color: #fff;
+}
+
+.navbar-toggler {
+    background-color: white;
+}

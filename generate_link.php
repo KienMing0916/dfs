@@ -1,33 +1,46 @@
 <?php
-$targetDirectory = "uploads/";
+include 'menu/validate_login.php';
+include 'config/database.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["selected_files"])) {
-    $selectedFiles = $_POST["selected_files"];
+if (isset($_POST['generate_link'])) {
+    if (isset($_POST['selected_files']) && is_array($_POST['selected_files'])) {
+        $selectedDocumentIDs = $_POST['selected_files'];
+        $zipFileName = 'shared_documents_' . date('Ymd') . '.zip';
 
-    if (!empty($selectedFiles)) {
+        // Create a new ZIP archive
         $zip = new ZipArchive();
-        $zipFileName = "shared_files.zip";
+        if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            // Loop through the selected document IDs and add them to the ZIP archive
+            foreach ($selectedDocumentIDs as $documentID) {
+                // Fetch the document file path based on the $documentID and add it to the ZIP
+                $query = "SELECT document FROM document_details WHERE Document_ID = :documentID";
+                $stmt = $con->prepare($query);
+                $stmt->bindParam(':documentID', $documentID);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            foreach ($selectedFiles as $file) {
-                $filePath = $targetDirectory . $file;
-                if (file_exists($filePath)) {
-                    $zip->addFile($filePath, $file);
+                if ($result) {
+                    $documentPath = $result['document'];
+                    $zip->addFile($documentPath, basename($documentPath));
                 }
             }
             $zip->close();
 
-            // Move the generated ZIP file to a public directory
-            $publicZipPath = "public/" . $zipFileName;
-            rename($zipFileName, $publicZipPath);
+            // Provide the ZIP file for download
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
+            readfile($zipFileName);
+            // Delete the ZIP file after download
+            unlink($zipFileName);
+            exit();
 
-            // Provide a download link for the generated ZIP file
-            echo "Generated link: <a href='$publicZipPath' download>Download ZIP</a>";
-        } else {
-            echo "Error creating the ZIP file.";
+        }else {
+            echo 'Failed to create the ZIP file.';
         }
-    } else {
-        echo "No files selected.";
+    }else {
+        echo 'No documents selected for sharing.';
     }
+}else {
+    echo 'Invalid request.';
 }
 ?>

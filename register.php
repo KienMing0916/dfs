@@ -63,7 +63,7 @@ if (isset($_SESSION['User_ID'])) {
                     
                     // Execute the query
                     if ($stmt->execute()) {
-                        echo "<div class='alert alert-success m-3'>Register successfully</div>";
+                        echo "<div class='alert alert-success m-3'>Register successfully. You may login using registered account now.</div>";
                         $_POST = array();
                     } else {
                         echo "<div class='alert alert-danger m-3'>Unable to save the customer record.</div>";

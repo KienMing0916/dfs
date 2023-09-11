@@ -3,7 +3,7 @@ include 'menu/validate_login.php';
 include 'config/database.php';
 
 // Fetch documents from the database
-$query = "SELECT * FROM document_details WHERE User_ID = ?";
+$query = "SELECT * FROM document_details WHERE Receiver_ID = ?";
 $stmt = $con->prepare($query);
 $stmt->bindParam(1, $_SESSION['User_ID']);
 $stmt->execute();
@@ -32,9 +32,9 @@ $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <?php
         $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
-        $query = "SELECT * FROM document_details WHERE User_ID = :user_id";
+        $query = "SELECT * FROM document_details WHERE Receiver_ID = :receiver_id";
         if (!empty($searchKeyword)) {
-            $query .= " AND (document LIKE :keyword OR document_type LIKE :keyword)";
+            $query .= " AND (document LIKE :keyword OR document_type LIKE :keyword OR status LIKE :keyword)";
             $searchKeyword = "%{$searchKeyword}%";
         }
         $query .= " ORDER BY Document_ID ASC";
@@ -43,7 +43,7 @@ $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt->bindParam(':keyword', $searchKeyword);
         }
 
-        $stmt->bindParam(':user_id', $_SESSION['User_ID']);
+        $stmt->bindParam(':receiver_id', $_SESSION['User_ID']);
         $stmt->execute();
         $num = $stmt->rowCount();
 
@@ -57,7 +57,7 @@ $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>';
         ?>
         
-        <div class="m-3">
+        <div class="m-3" style="overflow-x:auto;">
             <?php
             if ($num > 0) {
                 // Display the table only if there are matching documents
@@ -67,7 +67,8 @@ $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>No.</th>
                             <th>Document Name</th>
                             <th>Type</th>
-                            <th>Download</th>
+                            <th>Status</th>
+                            <th>Receive Date</th>
                         </tr>
                     </thead>
                     <tbody>';
@@ -78,7 +79,8 @@ $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     echo "<td>$i</td>";
                     echo "<td>" . str_replace('uploads/', '', $document['document']) . "</td>";
                     echo "<td>{$document['document_type']}</td>";
-                    echo "<td><a href='{$document['document']}' download>Download</a></td>";
+                    echo "<td>{$document['status']}</td>";
+                    echo "<td>{$document['upload_date']}</td>";
                     // Display other table cells
                     echo "</tr>";
                     $i++;

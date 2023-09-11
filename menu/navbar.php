@@ -8,16 +8,12 @@
         color: #fff;
     }
     
-    .navbar-toggler {
-        background-color: white;
-    }
 </style>
 
-<nav class="navbar navbar-expand-lg" style="background-color: #1C2331;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1C2331;">
     <div class="d-flex align-items-center ms-1">
         <a class="navbar-brand ms-2" href="home.php">
             <img src="img/logo.png" alt="logo" width="50" height="40" class="ms-3">
-            <!-- <span style="vertical-align: middle;"><strong>DFS</strong></span> -->
             <span style="vertical-align: middle; color: #fff;"><strong>DFS</strong></span>
 
         </a>

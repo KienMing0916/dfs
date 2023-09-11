@@ -43,8 +43,12 @@ if (!isset($_SESSION['User_ID'])) {
         $userProfile = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (isset($_POST['identityAuthentication'])) {
-            header("Location: identity_authentication.php");
-            exit();
+            if ($_SESSION['role'] === 'Issuer') {
+                echo "<div class='alert alert-warning m-3'>This is an issuer application feature, your account is already an issuer account.</div>";
+            }else{
+                header("Location: identity_authentication.php");
+                exit();
+            }
         }
         ?>
 

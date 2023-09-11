@@ -9,7 +9,7 @@ if (isset($_SESSION['User_ID'])) {
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>DFS - Login</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link rel="stylesheet" href="css/style.css">
@@ -50,7 +50,7 @@ if (isset($_SESSION['User_ID'])) {
                 echo "</div>";
             }else {
                 try {
-                    $query = "SELECT User_ID, password, role FROM users WHERE username=:useraccount OR email=:useraccount";
+                    $query = "SELECT User_ID, password, role FROM users WHERE username=:useraccount OR email=:useraccount OR linked_email_1=:useraccount OR linked_email_2=:useraccount";
                     $stmt = $con->prepare($query);
                     $stmt->bindParam(':useraccount', $useraccountinput);
                     $stmt->execute();
@@ -68,8 +68,15 @@ if (isset($_SESSION['User_ID'])) {
 
                     $_SESSION['User_ID'] = $row['User_ID'];
                     $_SESSION['role'] = $row['role'];
-                    header("Location: home.php");
-                    exit();
+
+                    if ($_SESSION['role'] === "Admin"){
+                      header("Location: admin.php");
+                      exit();
+                    }else{
+                      header("Location: home.php");
+                      exit();
+                    }
+
                 }catch (PDOException $exception) {
                     echo "<div class='alert alert-danger m-3'>ERROR: " . $exception->getMessage() . "</div>";
                 }
