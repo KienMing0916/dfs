@@ -26,6 +26,7 @@ include 'config/database.php';
         </div>
 
         <?php
+        $availableFiles = [];
         $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
         $query = "SELECT * FROM document_details WHERE Receiver_ID = :user_id AND status = 'Normal'";
         if (!empty($searchKeyword)) {
@@ -52,7 +53,7 @@ include 'config/database.php';
         </div>';
         ?>
 
-        <form class="p-3" action="https://submit-form.com/gv71Ixa2" method="post" onsubmit="return validateForm()">
+        <form class="p-3" action="https://submit-form.com/gv71Ixa2" method="post" onsubmit="return validateForm('<?php echo json_encode($availableFiles); ?>')">
             <div class="" style="overflow-x:auto;">
             <?php
             if ($num > 0) {
@@ -71,6 +72,7 @@ include 'config/database.php';
                 
                 $i = 1;
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $document) {
+                    $availableFiles[] = str_replace('uploads/', '', $document['document']);
                     echo '<tr>';
                     echo '<td>' . $i . '</td>';
                     echo "<td>" . str_replace('uploads/', '', $document['document']) . "</td>";
@@ -106,21 +108,23 @@ include 'config/database.php';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script>
-        function validateForm() {
-            // Check if the file input field is empty
-            var fileInput = document.getElementById("photo");
-            var fileSelectedField = document.getElementById("fileSelected");
+    function validateForm(availableFilesJSON) {
+        var availableFiles = JSON.parse(availableFilesJSON);
+        var fileInput = document.getElementById("photo");
+        var fileSelectedField = document.getElementById("fileSelected");
 
-            if (fileInput.value === "") {
-                alert("Please select a file.");
-                return false; // Prevent form submission
-            }
+        var selectedFile = fileInput.value;
 
-            // Set the value of the hidden field to 1 to indicate that a file is selected
-            fileSelectedField.value = "1";
-
-            return true; // Allow form submission
+        if (selectedFile === "") {
+            alert("Please select a file.");
+            return false;
         }
-        </script>
+
+        fileSelectedField.value = "1";
+
+        return true;
+    }
+    </script>
+
 </body>
 </html>

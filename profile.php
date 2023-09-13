@@ -179,6 +179,13 @@ if (!isset($_SESSION['User_ID'])) {
                         </div>
                     </div>
 
+                    <div class="row mb-1">
+                        <div class="col-md-10">
+                            <label for="name" class="col-form-label">Role:</label>
+                            <input type="text" class="form-control" id="role" name="role" value="<?php echo isset($userProfile['role']) ? $userProfile['role'] : ''; ?>" readonly>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-10">
                             <label for="intro" class="col-form-label">Intro:</label>
@@ -232,7 +239,9 @@ if (!isset($_SESSION['User_ID'])) {
                 authButton.style.display = "none";
                 var fields = document.querySelectorAll('input[readonly], textarea[readonly]');
                 fields.forEach(function (field) {
-                    field.readOnly = false;
+                    if (field.id !== "role") { // Exclude the "Role" field
+                        field.readOnly = false;
+                    }
                 });
             } else {
                 saveButton.style.display = "none";
