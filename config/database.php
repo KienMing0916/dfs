@@ -1,5 +1,5 @@
 <?php
-// used to connect to the database
+// used to connect to the database 
 $host = "localhost";
 $db_name = "dfs";
 $username = "kienming916";
